@@ -1,4 +1,4 @@
-from django.http import HttpResponse, Http404
+from django.http import HttpResponse, Http404, JsonResponse
 from django.template import loader
 from .models import Drink, Ingredient, Size
 import json
@@ -57,8 +57,8 @@ def calculateOrder(request):
 
     for ingredient in pizza["ingredients"]:
       total_pizza_price = total_pizza_price + ingredient["price"]
-      template_pizzas["pizzas"].append({"total_pizza_price": total_pizza_price, "size": pizza["size"], "ingredients": pizza["ingredients"]})
-
+    
+    template_pizzas["pizzas"].append({"total_pizza_price": total_pizza_price, "size": pizza["size"], "ingredients": pizza["ingredients"]})
     total_pizzas = total_pizzas + total_pizza_price
   
   template_pizzas["total_pizzas_price"] = total_pizzas
@@ -72,13 +72,13 @@ def calculateOrder(request):
   #Cálculo del costo total de la orden
   total_order_price = total_delivery + total_drinks + total_pizzas
 
-  context = {
+  response = {
     "drinks": template_drinks,
     "delivery": template_delivery,
     "pizzas": template_pizzas
   }
 
-  return HttpResponse(context)
+  return JsonResponse(response)
 
 def registerOrder(request):
   data = json.loads(request.body)

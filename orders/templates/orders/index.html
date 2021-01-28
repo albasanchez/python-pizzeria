@@ -386,8 +386,10 @@
         methods: {
           async calculateOrder(){
             this.status = "SENDING"
-            await sendRequest("{% url 'calculate-order' %}", "{{ csrf_token }}", {"order": this.order})
+            test = await sendRequest("{% url 'calculate-order' %}", "{{ csrf_token }}", {"order": this.order})
             this.status = "SENDED"
+
+            console.log(test)
           },
           invalidPizzas() {
             let invalid = false;
