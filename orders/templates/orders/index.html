@@ -3,16 +3,14 @@
   <head>
     <meta charset="utf-8">
     <title>Pizzeria UCAB</title>
-    <script type='text/javascript'>
-      const items = {{ array_data|safe }};
-      const counter = {{ int_data|safe }};
-    </script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/@mdi/font@4.x/css/materialdesignicons.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.min.css" rel="stylesheet">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui">
     {% load static %}
     <link rel="stylesheet" type="text/css" href="{% static 'orders/style.css' %}">
+    <script src="{% static 'orders/services.js' %}"></script>
   </head>
   <body>
     <div id="app">
@@ -215,7 +213,7 @@
                             <v-btn text @click="e1 = 3">
                               Volver
                             </v-btn>
-                            <v-btn color="primary" @click="e1 = 4" :disabled="!valid">
+                            <v-btn color="primary" @click="registerOrder" :disabled="!valid">
                               Registrar
                             </v-btn>
                           </v-col>
@@ -335,6 +333,10 @@
             direction: ""
         },
         methods: {
+          async registerOrder(){
+            test = await registerOrder("{% url 'register-order' %}", "{{ csrf_token }}", {"username": this.email})
+            alert(`ESTA ES UNA ALERTA DE COMPRA PARA EL EMAIL: ${test}`)
+          }
         },
         watch: {
         }
