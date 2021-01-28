@@ -36,5 +36,5 @@ def main(request):
 def registerOrder(request):
   data = json.loads(request.body)
   print(data)
-  print(data["username"])
-  return HttpResponse(data["username"])
+  print(data["order"])
+  return HttpResponse(data["order"])

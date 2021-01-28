@@ -96,12 +96,17 @@
                       <v-stepper-content step="2">
                         <v-row>
                           <v-col class="d-flex justify-center">
-                            <v-btn color="red darken-4" dark @click="order.pizzas.push({size: null, ingredients: []})">
+                            <v-btn
+                              class="add-button"
+                              color="red darken-4"
+                              dark
+                              @click="order.pizzas.push({size: null, ingredients: []})"
+                            >
                               Agregar pizza
                             </v-btn>
                           </v-col>
                         </v-row>
-                        <v-card v-for="(pizza, index) in order.pizzas" class="mb-12" color="grey lighten-3" elevation="0">
+                        <v-card v-for="(pizza, index) in order.pizzas" :key="index" class="mb-12" color="grey lighten-3" elevation="0">
                           <v-card-title>
                             Pizza #[[index+1]]
                             <v-spacer></v-spacer>
@@ -123,7 +128,7 @@
                             </v-col>
                           </v-row>
                           <v-row>
-                            <v-col cols="4" v-for="ingredient in available_ingredients">
+                            <v-col cols="4" v-for="(ingredient, ing_index) in available_ingredients" :key="ing_index">
                               <v-checkbox
                                 v-model="order.pizzas[index].ingredients"
                                 :label="ingredient.name"
@@ -148,12 +153,17 @@
                       <v-stepper-content step="3">
                         <v-row>
                           <v-col class="d-flex justify-center">
-                            <v-btn color="red darken-4" dark @click="order.drinks.push({name: null, id: null})">
+                            <v-btn
+                              class="add-button"
+                              color="red darken-4"
+                              dark
+                              @click="order.drinks.push({name: null, id: null})"
+                            >
                               Agregar bebida
                             </v-btn>
                           </v-col>
                         </v-row>
-                        <v-card v-for="(drink, index) in order.drinks" class="mb-12" color="grey lighten-3" elevation="0">
+                        <v-card v-for="(drink, index) in order.drinks" :key="index"  class="mb-12" color="grey lighten-3" elevation="0">
                           <v-card-title>
                             Drink #[[index+1]]
                             <v-spacer></v-spacer>
@@ -247,7 +257,7 @@
                     <v-row>
                       <v-col>
                         <v-card-text class="content">
-                          <v-row v-for="(pizza, index) in order.pizzas">
+                          <v-row v-for="(pizza, index) in order.pizzas" :key="index">
                             <v-col>
                               Pizza [[index+1]]. Tamaño: [[pizza.size]]
                               Ingredientes: [[pizza.ingredients]]
@@ -264,7 +274,7 @@
                     <v-row>
                       <v-col>
                         <v-card-text class="content">
-                          <v-row v-for="(drink, index) in order.drinks">
+                          <v-row v-for="(drink, index) in order.drinks" :key="index">
                             <v-col>
                               Bebida [[index+1]]. [[drink.name]]
                             </v-col>
@@ -335,8 +345,8 @@
         },
         methods: {
           async registerOrder(){
-            test = await registerOrder("{% url 'register-order' %}", "{{ csrf_token }}", {"username": this.order.client.email})
-            alert(`ESTA ES UNA ALERTA DE COMPRA PARA EL EMAIL: ${test}`)
+            await registerOrder("{% url 'register-order' %}", "{{ csrf_token }}", {"order": this.order})
+            alert(`Compra ejecutada`)
           }
         },
         watch: {
