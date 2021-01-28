@@ -185,7 +185,7 @@
                           <v-row class="card-row">
                             <v-col class="padding-top-0">
                               <v-select
-                                v-model="order.drinks[index].name"
+                                v-model="order.drinks[index]"
                                 :items="available_drinks"
                                 :item-text="item => item.name +' ($'+ item.price + ')'"
                                 :rules="[v => !!v || 'Item is required']"
@@ -242,7 +242,7 @@
                             <v-btn
                               color="primary"
                               @click="registerOrder"
-                              :loading="status == SENDING"
+                              :loading="status == 'SENDING'"
                               :disabled="invalidDirection()">
                               Ver resumen
                             </v-btn>
@@ -280,7 +280,7 @@
                       <v-col>
                         <v-card-text class="padding-top-0">
                           <v-row>
-                            <v-col cols="4" v-for="(pizza, index) in order.pizzas" :key="index">
+                            <v-col cols="3" v-for="(pizza, index) in order.pizzas" :key="index">
                               <b class="small-title">Pizza [[index+1]]</b> <br>
                               <b>Tamaño:</b> [[pizza.size.name]] <br>
                               <span v-if="pizza.ingredients.length>0">
@@ -304,11 +304,9 @@
                     <v-row>
                       <v-col>
                         <v-card-text class="padding-top-0">
-                          <v-row v-for="(drink, index) in order.drinks" :key="index">
-                            <v-col>
-                              Bebida [[index+1]]. [[drink.name]]
-                            </v-col>
-                          </v-row>
+                          <span v-for="(drink, index) in order.drinks" :key="index">
+                            <b>Bebida [[index+1]]:</b> [[drink.name]] <br>
+                          </span>
                         </v-card-text>
                       </v-col>
                     </v-row>
@@ -319,7 +317,9 @@
                     <v-card-title class="subtitle padding-bottom-0">Delivery</v-card-title>
                     <v-row>
                       <v-col>
-                        <v-card-text class="padding-top-0">Dirección: [[order.delivery.direction]]</v-card-text>
+                        <v-card-text class="padding-top-0">
+                          <b>Dirección:</b> [[order.delivery.direction]]
+                        </v-card-text>
                       </v-col>
                     </v-row>
                   </span>
@@ -349,14 +349,14 @@
               v => /.+@.+\..+/.test(v) || 'E-mail must be valid',
             ],
             valid: true,
-            status: "",
+            status: "SENDED",
             // DB Data
             available_sizes: available_sizes,
             available_ingredients: available_ingredients,
             available_drinks: available_drinks,
             // Order data
             checkbox_drink: false,
-            checkbox_delivery: false,
+            checkbox_delivery: true,
             order: {
               client: {
                 name: 'Alba',
@@ -370,16 +370,16 @@
                 },
                 {
                   size: { id: 2, name: "Mediana", price: 16 },
-                  ingredients: [{ id: 1, name: "Maíz", price: 2.5 }, { id: 4, name: "Tomates secos", price: 7 }],
+                  ingredients: [{ id: 9, name: "Maíz", price: 2.5 }, { id: 12, name: "Tomates secos", price: 7 }],
                 },
                 {
                   size: { id: 2, name: "Mediana", price: 16 },
-                  ingredients: [{ id: 3, name: "Cebolla", price: 2 }, { id: 8, name: "Tocineta", price: 4.7 }, { id: 7, name: "Piña", price: 3 }],
+                  ingredients: [{ id: 11, name: "Cebolla", price: 2 }, { id: 16, name: "Tocineta", price: 4.7 }, { id: 15, name: "Piña", price: 3 }],
                 },
               ],
-              drinks: [],
+              drinks: [{ id: 10, name: "Jugo", price: 3.5 }, { id: 9, name: "Refresco", price: 4 }],
               delivery: {
-                direction: "",
+                direction: "Calle B",
                 price: 5
               }
             },
