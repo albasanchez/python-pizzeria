@@ -353,32 +353,57 @@
                       <b>Total: </b> $[[calculated_order.total_order_price]]
                     </v-col>
                   </v-row>
-                  <v-row v-if="status == 'REGISTERED'">
-                    <v-col class="d-flex justify-center">
-                      <b class="subtitle primary--text">¡Compra realizada!</b>
-                    </v-col>
-                  </v-row>
                   <v-row>
                     <v-col class="d-flex justify-center">
                       <v-btn
-                        v-if="status == 'SENDED' || status == 'REGISTERING'"
+                        text
+                        @click="status = 'ORDERING'"
+                      >
+                        Volver
+                      </v-btn>
+                      <v-btn
                         color="primary"
                         @click="registerOrder"
                         :loading="status == 'REGISTERING'">
-                        Realizar compra
-                      </v-btn>
-                      <v-btn
-                        v-if="status == 'REGISTERED'"
-                        color="primary"
-                        @click="newOrder()"
-                      >
-                        Realizar nueva compra
+                        Registrar compra
                       </v-btn>
                     </v-col>
                   </v-row>
                 </v-card>
               </v-col>
             </v-row>
+            <v-dialog
+              v-model="dialog"
+              :persistent="status=='REGISTERED'"
+              max-width="290"
+              transition="dialog-bottom-transition"
+            >
+              <v-card>
+                <v-toolbar
+                :color="status=='REGISTERED' ? 'primary' : 'red'"
+                dark
+                >[[status=='REGISTERED' ? 'Orden registrada correctamente' : 'Ocurrió un error con el registro de la orden']]</v-toolbar>
+                <v-card-actions>
+                  <v-spacer></v-spacer>
+                  <v-btn
+                    color="red darken-1"
+                    text
+                    @click="dialog = false"
+                    v-if="status!='REGISTERED'"
+                  >
+                    Volver
+                  </v-btn>
+                  <v-btn
+                    color="primary darken-1"
+                    text
+                    @click="newOrder()"
+                    v-if="status=='REGISTERED'"
+                  >
+                    Registrar nueva orden
+                  </v-btn>
+                </v-card-actions>
+              </v-card>
+            </v-dialog>
           </v-container>
         </v-main>
       </v-app>
@@ -402,6 +427,7 @@
               v => /.+@.+\..+/.test(v) || 'E-mail must be valid',
             ],
             valid: true,
+            dialog: false,
             // STATUS = "ORDERING" | "SENDING" | "SENDED" | "REGISTERING" | "REGISTERED"
             status: "ORDERING",
             // DB Data
@@ -434,14 +460,19 @@
         methods: {
           async calculateOrder(){
             this.status = "SENDING"
-            calculated_order = await sendRequest("{% url 'calculate-order' %}", "{{ csrf_token }}", {"order": this.order})
+            let calculated_order = await sendRequest("{% url 'calculate-order' %}", "{{ csrf_token }}", {"order": this.order})
             this.status = "SENDED"
             this.calculated_order = { client: this.order.client, ...calculated_order }
           },
           async registerOrder() {
             this.status = "REGISTERING"
-            await sendRequest("{% url 'register-order' %}", "{{ csrf_token }}", { "order": this.calculated_order })
-            this.status = "REGISTERED"
+            let res = await sendRequest("{% url 'register-order' %}", "{{ csrf_token }}", { "order": this.calculated_order })
+            if(res.status == 200) {
+              this.status = "REGISTERED"
+            } else {
+              this.status = 'SENDED'
+            }
+            this.dialog = true
           },
           newOrder(){
             location.reload()
