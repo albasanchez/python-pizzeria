@@ -1,4 +1,5 @@
 from django.contrib import admin
+from django.db.models import Count
 
 from .models import Client, Order, Size, Ingredient, Pizza, Pizza_Ingredient, Drink, Order_Drink, Delivery
 
@@ -14,8 +15,18 @@ class IngredientAdmin(admin.ModelAdmin):
     list_filter = ('name',)
 
 class ClientAdmin(admin.ModelAdmin):
-    list_display = ('name', 'last_name', 'order', 'totalOrderPrice')
+    list_display = ('name', 'last_name', 'order', 'totalOrderPrices')
     list_filter = ('name', 'last_name')
+
+    def totalOrderPrices(self, obj):
+        orders = Order.objects.all()
+        orderPrice = 0
+        for order in orders:
+            if order.fk_client.id == obj.id:
+                orderPrice = orderPrice + order.price
+        return orderPrice
+    
+    totalOrderPrices.admin_order_field = 'name'
 
 class SizeAdmin(admin.ModelAdmin):
     list_display = ('name', 'order', 'totalOrderPrice')
