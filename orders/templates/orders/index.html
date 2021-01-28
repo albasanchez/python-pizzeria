@@ -108,6 +108,9 @@
                               @click="order.pizzas.push({size: null, ingredients: []})"
                             >
                               Agregar pizza
+                              <v-icon class="ml-3">
+                                mdi-plus-box-outline
+                              </v-icon>
                             </v-btn>
                           </v-col>
                         </v-row>
@@ -171,6 +174,9 @@
                               @click="order.drinks.push({name: null, id: null})"
                             >
                               Agregar bebida
+                              <v-icon class="ml-3">
+                                mdi-plus-box-outline
+                              </v-icon>
                             </v-btn>
                           </v-col>
                         </v-row>
@@ -375,27 +381,35 @@
             <v-dialog
               v-model="dialog"
               :persistent="status=='REGISTERED'"
-              max-width="290"
+              max-width="350"
               transition="dialog-bottom-transition"
             >
               <v-card>
                 <v-toolbar
-                :color="status=='REGISTERED' ? 'primary' : 'red'"
-                dark
-                >[[status=='REGISTERED' ? 'Orden registrada correctamente' : 'Ocurrió un error con el registro de la orden']]</v-toolbar>
-                <v-card-actions>
-                  <v-spacer></v-spacer>
+                  :color="status=='REGISTERED' ? 'primary' : 'red'"
+                  dark
+                  class="mb-0"
+                >
+                  [[status=='REGISTERED' ? 'Orden registrada satisfactoriamente' : 'Ocurrió un error con el registro de la orden']]
+                  <v-icon class="ml-3 mb-0">
+                    mdi-check-decagram
+                  </v-icon>
+                </v-toolbar>
+                <v-card-actions class="d-flex justify-center">
                   <v-btn
+                    class="my-12"
                     color="red darken-1"
                     text
+                    lg
                     @click="dialog = false"
                     v-if="status!='REGISTERED'"
                   >
                     Volver
                   </v-btn>
                   <v-btn
-                    color="primary darken-1"
-                    text
+                    class="my-12"
+                    color="primary"
+                    large
                     @click="newOrder()"
                     v-if="status=='REGISTERED'"
                   >
