@@ -2,6 +2,7 @@ from django.http import HttpResponse, Http404, JsonResponse
 from django.template import loader
 from .models import Drink, Ingredient, Size, Client, Order, Delivery, Order_Drink, Pizza, Pizza_Ingredient
 from django.db import transaction
+from django.utils import timezone
 from datetime import date
 
 import json
@@ -96,10 +97,15 @@ def registerOrder(request):
     client = order["client"]
 
     #Registro de información del cliente
-    registered_client = Client.objects.create(name=client["name"], last_name=client["last_name"], email=client["email"])
+    registered_client = None
+    email_exist = Client.objects.filter(email = client["email"]).count()
+    if email_exist > 0:
+      registered_client = Client.objects.get(email = client["email"])
+    else:
+      registered_client = Client.objects.create(name=client["name"], last_name=client["last_name"], email=client["email"])
     
     #Registro de información de la orden
-    registered_order = Order.objects.create(date=date.today(), price=order["total_order_price"], fk_client=registered_client)
+    registered_order = Order.objects.create(price=order["total_order_price"], fk_client=registered_client)
 
     #Registro de información de delivery
     registered_delivery = Delivery.objects.create(price=delivery["price"], fk_order=registered_order, direction=delivery["direction"])
