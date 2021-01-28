@@ -4,11 +4,14 @@
 
 .subtitle {
   font-size: 16px;
-  padding-bottom: 0;
 }
 
-.content {
+.padding-top-0 {
   padding-top: 0;
+}
+
+.padding-bottom-0 {
+  padding-bottom: 0;
 }
 
 .add-button {
@@ -21,10 +24,6 @@
 
 .ingredient-checkbox {
   max-height: 40px;
-}
-
-.checkbox-row {
-  padding-bottom: 0;
 }
 
 .delivery-row {

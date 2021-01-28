@@ -86,7 +86,11 @@
                         </v-row>
                         <v-row>
                           <v-col class="d-flex justify-end">
-                            <v-btn color="primary" @click="e1 = 2">
+                            <v-btn
+                              :disabled="!order.client.name || !order.client.last_name || !order.client.email || !valid"
+                              color="primary"
+                              @click="e1 = 2"
+                            >
                               Continuar
                             </v-btn>
                           </v-col>
@@ -106,7 +110,7 @@
                             </v-btn>
                           </v-col>
                         </v-row>
-                        <v-card v-for="(pizza, index) in order.pizzas" :key="index" class="mb-12" color="grey lighten-3" elevation="0">
+                        <v-card v-for="(pizza, index) in order.pizzas" :key="index" class="mb-6" color="grey lighten-3" elevation="0">
                           <v-card-title>
                             Pizza #[[index+1]]
                             <v-spacer></v-spacer>
@@ -115,26 +119,26 @@
                             </v-btn>
                           </v-card-title>
                           <v-row class="card-row">
-                            <v-col>
+                            <v-col class="padding-top-0">
                               <v-select
                                 v-model="order.pizzas[index].size"
                                 :items="available_sizes"
-                                item-text="name"
-                                item-value="name"
+                                :item-text="item => item.name +' ($'+ item.price + ')'"
                                 :rules="[v => !!v || 'Item is required']"
                                 label="Tamaño"
                                 required
+                                return-object
                               ></v-select>
                             </v-col>
                           </v-row>
-                          <v-card-title class="subtitle">Ingredientes</v-card-title>
+                          <v-card-title class="subtitle padding-top-0 padding-bottom-0">Ingredientes</v-card-title>
                           <v-row class="card-row">
-                            <v-col cols="3" v-for="(ingredient, ing_index) in available_ingredients" :key="ing_index">
+                            <v-col cols="4" v-for="(ingredient, ing_index) in available_ingredients" :key="ing_index">
                               <v-checkbox
                                 class="ingredient-checkbox"
                                 v-model="order.pizzas[index].ingredients"
-                                :label="ingredient.name"
-                                :value="ingredient.name"
+                                :label="ingredient.name +' ($'+ ingredient.price + ')'"
+                                :value="ingredient"
                               ></v-checkbox>
                             </v-col>
                           </v-row>
@@ -145,7 +149,11 @@
                             <v-btn text @click="e1 = 1">
                               Volver
                             </v-btn>
-                            <v-btn color="primary" @click="e1 = 3">
+                            <v-btn
+                              :disabled="invalidPizzas()"
+                              color="primary"
+                              @click="e1 = 3"
+                            >
                               Continuar
                             </v-btn>
                           </v-col>
@@ -165,7 +173,7 @@
                             </v-btn>
                           </v-col>
                         </v-row>
-                        <v-card v-for="(drink, index) in order.drinks" :key="index"  class="mb-12" color="grey lighten-3" elevation="0">
+                        <v-card v-for="(drink, index) in order.drinks" :key="index"  class="mb-6" color="grey lighten-3" elevation="0">
                           <v-card-title>
                             Bebida #[[index+1]]
                             <v-spacer></v-spacer>
@@ -174,15 +182,15 @@
                             </v-btn>
                           </v-card-title>
                           <v-row class="card-row">
-                            <v-col>
+                            <v-col class="padding-top-0">
                               <v-select
                                 v-model="order.drinks[index].name"
                                 :items="available_drinks"
-                                item-text="name"
-                                item-value="name"
+                                :item-text="item => item.name +' ($'+ item.price + ')'"
                                 :rules="[v => !!v || 'Item is required']"
                                 label="Bebida"
                                 required
+                                return-object
                               ></v-select>
                             </v-col>
                           </v-row>
@@ -193,7 +201,11 @@
                             <v-btn text @click="e1 = 2">
                               Volver
                             </v-btn>
-                            <v-btn color="primary" @click="e1 = 4">
+                            <v-btn
+                              :disabled="invalidDrinks()"
+                              color="primary"
+                              @click="e1 = 4"
+                            >
                               Continuar
                             </v-btn>
                           </v-col>
@@ -201,7 +213,7 @@
                       </v-stepper-content>
 
                       <v-stepper-content step="4">
-                        <v-row class="checkbox-row">
+                        <v-row class="padding-bottom-0">
                           <v-col>
                             <v-checkbox
                               v-model="checkbox_delivery"
@@ -226,8 +238,8 @@
                             <v-btn text @click="e1 = 3">
                               Volver
                             </v-btn>
-                            <v-btn color="primary" @click="registerOrder" :disabled="!valid">
-                              Registrar
+                            <v-btn color="primary" @click="registerOrder" :disabled="invalidDirection()">
+                              Ver resumen
                             </v-btn>
                           </v-col>
                         </v-row>
@@ -242,23 +254,23 @@
 
                   <span v-if="order.client.name && order.client.last_name && order.client.email">
                     <v-divider class="mx-4"></v-divider>
-                    <v-card-title class="subtitle">Cliente</v-card-title>
+                    <v-card-title class="subtitle padding-bottom-0">Cliente</v-card-title>
                     <v-row>
                       <v-col>
-                        <v-card-text class="content">[[order.client.name]] [[order.client.last_name]]</v-card-text>
+                        <v-card-text class="padding-top-0">[[order.client.name]] [[order.client.last_name]]</v-card-text>
                       </v-col>
                       <v-col>
-                        <v-card-text class="content">[[order.client.email]]</v-card-text>
+                        <v-card-text class="padding-top-0">[[order.client.email]]</v-card-text>
                       </v-col>
                     </v-row>
                   </span>
                   
                   <span v-if="order.pizzas[0].size">
                     <v-divider class="mx-4"></v-divider>
-                    <v-card-title class="subtitle">Pizzas</v-card-title>
+                    <v-card-title class="subtitle padding-bottom-0">Pizzas</v-card-title>
                     <v-row>
                       <v-col>
-                        <v-card-text class="content">
+                        <v-card-text class="padding-top-0">
                           <v-row v-for="(pizza, index) in order.pizzas" :key="index">
                             <v-col>
                               Pizza [[index+1]]. Tamaño: [[pizza.size]]
@@ -272,10 +284,10 @@
 
                   <span v-if="order.drinks.length>0">
                     <v-divider class="mx-4"></v-divider>
-                    <v-card-title class="subtitle">Bebidas</v-card-title>
+                    <v-card-title class="subtitle padding-bottom-0">Bebidas</v-card-title>
                     <v-row>
                       <v-col>
-                        <v-card-text class="content">
+                        <v-card-text class="padding-top-0">
                           <v-row v-for="(drink, index) in order.drinks" :key="index">
                             <v-col>
                               Bebida [[index+1]]. [[drink.name]]
@@ -288,10 +300,10 @@
 
                   <span v-if="checkbox_delivery">
                     <v-divider class="mx-4"></v-divider>
-                    <v-card-title class="subtitle">Delivery</v-card-title>
+                    <v-card-title class="subtitle padding-bottom-0">Delivery</v-card-title>
                     <v-row>
                       <v-col>
-                        <v-card-text class="content">Dirección: [[order.delivery.direction]]</v-card-text>
+                        <v-card-text class="padding-top-0">Dirección: [[order.delivery.direction]]</v-card-text>
                       </v-col>
                     </v-row>
                   </span>
@@ -351,6 +363,35 @@
           async registerOrder(){
             await registerOrder("{% url 'register-order' %}", "{{ csrf_token }}", {"order": this.order})
             alert(`Compra ejecutada`)
+          },
+          invalidPizzas() {
+            let invalid = false;
+            this.order.pizzas.forEach(pizza => {
+              if(!pizza.size) {
+                invalid = true
+              }
+            });
+            return invalid;
+          },
+          invalidDrinks() {
+            if (this.order.drinks.length==0){
+              return false;
+            } else {
+              let invalid = false;
+              this.order.drinks.forEach(drink => {
+                if (!drink.name) {
+                  invalid = true
+                }
+              });
+              return invalid;
+            }
+          },
+          invalidDirection() {
+            if(this.checkbox_delivery == false) {
+              return false
+            } else {
+              return !this.order.delivery.direction
+            }
           }
         },
         watch: {
