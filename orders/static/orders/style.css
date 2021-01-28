@@ -3,12 +3,19 @@
 }
 
 .subtitle {
-  font-size: 16px;
-  padding-bottom: 0;
+  font-size: 18px;
 }
 
-.content {
+.small-title {
+  font-size: 15px;
+}
+
+.padding-top-0 {
   padding-top: 0;
+}
+
+.padding-bottom-0 {
+  padding-bottom: 0;
 }
 
 .add-button {
@@ -21,10 +28,6 @@
 
 .ingredient-checkbox {
   max-height: 40px;
-}
-
-.checkbox-row {
-  padding-bottom: 0;
 }
 
 .delivery-row {
