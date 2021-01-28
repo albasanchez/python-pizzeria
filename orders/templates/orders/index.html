@@ -27,7 +27,7 @@
         </v-app-bar>
         <v-main class="background">
           <v-container fluid>
-            <v-row>
+            <v-row class="order">
               <v-col v-if="status=='ORDERING' || status=='SENDING'">
                 <v-form ref="form" v-model="valid" lazy-validation>
                   <v-stepper v-model="e1">
@@ -258,80 +258,122 @@
                 <v-card elevation="2">
                   <v-card-title>Resumen</v-card-title>
 
-                  <span v-if="order.client.name && order.client.last_name && order.client.email">
-                    <v-divider class="mx-4"></v-divider>
-                    <v-card-title class="subtitle padding-bottom-0">Cliente</v-card-title>
-                    <v-row>
-                      <v-col>
-                        <v-card-text class="padding-top-0" >
-                          <b>Nombre:</b> [[order.client.name]] [[order.client.last_name]]
-                        </v-card-text>
-                      </v-col>
-                      <v-col>
-                        <v-card-text class="padding-top-0">
-                          <b>Email:</b> [[order.client.email]]</v-card-text>
-                      </v-col>
-                    </v-row>
-                  </span>
+                  <!-- Cliente -->
+                  <v-divider class="mx-4 red darken-4"></v-divider>
+                  <v-card-title class="subtitle padding-bottom-0">Cliente</v-card-title>
+                  <v-card-text class="padding-top-0" >
+                    <b>Nombre:</b> [[calculated_order.client.name]] [[calculated_order.client.last_name]] <br>
+                    <b>Email:</b> [[calculated_order.client.email]]
+                  </v-card-text>
                   
-                  <span v-if="order.pizzas[0].size">
-                    <v-divider class="mx-4"></v-divider>
-                    <v-card-title class="subtitle padding-bottom-0">Pizzas</v-card-title>
+                  <!-- Pizzas -->
+                  <v-divider class="mx-4 red darken-4"></v-divider>
+                  <v-card-title class="subtitle padding-bottom-0">Pizzas</v-card-title>
+                  <v-card-text class="padding-top-0">
                     <v-row>
-                      <v-col>
-                        <v-card-text class="padding-top-0">
-                          <v-row>
-                            <v-col cols="3" v-for="(pizza, index) in order.pizzas" :key="index">
-                              <b class="small-title">Pizza [[index+1]]</b> <br>
-                              <b>Tamaño:</b> [[pizza.size.name]] <br>
-                              <span v-if="pizza.ingredients.length>0">
-                                <b>Ingredientes:</b>
-                                <ul>
-                                  <li v-for="(ingredient, index) in pizza.ingredients" :key="index">
-                                    [[ingredient.name]]
-                                  </li>
-                                </ul>
-                              </span>
-                            </v-col>
-                          </v-row>
-                        </v-card-text>
-                      </v-col>
-                    </v-row>
-                  </span>
-
-                  <span v-if="order.drinks.length>0">
-                    <v-divider class="mx-4"></v-divider>
-                    <v-card-title class="subtitle padding-bottom-0">Bebidas</v-card-title>
-                    <v-row>
-                      <v-col>
-                        <v-card-text class="padding-top-0">
-                          <span v-for="(drink, index) in order.drinks" :key="index">
-                            <b>Bebida [[index+1]]:</b> [[drink.name]] <br>
+                      <v-col
+                        cols="3"
+                        v-for="(pizza, index) in calculated_order.pizzas.pizzas"
+                        :key="index"
+                        class="d-flex align-start flex-column"
+                      >
+                        <span class="mb-auto">
+                          <b class="small-title">Pizza [[index+1]]</b> <br>
+                          <b>Tamaño:</b> [[pizza.size.name]] <br>
+                          <span v-if="pizza.ingredients.length>0">
+                            <b>Ingredientes:</b>
+                            <ul>
+                              <li v-for="(ingredient, index) in pizza.ingredients" :key="index">
+                                [[ingredient.name]]
+                              </li>
+                            </ul>
                           </span>
-                        </v-card-text>
+                        </span>
+                        <v-row class="item-total">
+                          <v-col class="d-flex justify-end total-col padding-x-0 padding-top-0">
+                            <b>Total: </b> $[[pizza.total_pizza_price]]
+                          </v-col>
+                        </v-row>
                       </v-col>
                     </v-row>
-                  </span>
-
-                  <span v-if="checkbox_delivery">
-                    <v-divider class="mx-4"></v-divider>
-                    <v-card-title class="subtitle padding-bottom-0">Delivery</v-card-title>
+                    <v-divider></v-divider>
                     <v-row>
-                      <v-col>
-                        <v-card-text class="padding-top-0">
-                          <b>Dirección:</b> [[order.delivery.direction]]
-                        </v-card-text>
+                      <v-col class="d-flex justify-end padding-bottom-0 small-title">
+                        <b>Total: </b> $[[calculated_order.pizzas.total_pizzas_price]]
                       </v-col>
                     </v-row>
-                  </span>
+                  </v-card-text>
 
-                  <v-divider class="mx-4"></v-divider>
-                  <v-btn
-                    color="primary"
-                    @click="registerOrder"
-                    :loading="status == 'REGISTERING'">
-                    Realizar compra
-                  </v-btn>
+                  <v-divider v-if="calculated_order.drinks.drinks.length>0" class="mx-4 red darken-4"></v-divider>
+                  <v-card-title v-if="calculated_order.drinks.drinks.length>0" class="subtitle padding-bottom-0">Bebidas</v-card-title>
+                  <v-card-text v-if="calculated_order.drinks.drinks.length>0" class="padding-top-0">
+                    <v-row>
+                      <v-col
+                        cols="3"
+                        v-for="(drink, index) in calculated_order.drinks.drinks" :key="index"
+                        :key="index"
+                        class="d-flex align-start flex-column"
+                      >
+                        <span class="mb-auto">
+                          <b class="small-title">Bebida [[index+1]]</b> <br>
+                          [[drink.name]]
+                        </span>
+                        <v-row class="item-total">
+                          <v-col class="d-flex justify-end total-col padding-x-0 padding-top-0">
+                            <b>Total: </b> $[[drink.price]]
+                          </v-col>
+                        </v-row>
+                      </v-col>
+                    </v-row>
+                    <v-divider></v-divider>
+                    <v-row>
+                      <v-col class="d-flex justify-end padding-bottom-0 small-title">
+                        <b>Total: </b> $[[calculated_order.drinks.total_drinks_price]]
+                      </v-col>
+                    </v-row>
+                  </v-card-text>
+
+                  <v-divider v-if="calculated_order.delivery.direction" class="mx-4 red darken-4"></v-divider>
+                  <v-card-title v-if="calculated_order.delivery.direction" class="subtitle padding-bottom-0">Delivery</v-card-title>
+                  <v-card-text v-if="calculated_order.delivery.direction" class="padding-top-0">
+                    <b>Dirección:</b> [[calculated_order.delivery.direction]]
+                    <v-divider></v-divider>
+                    <v-row>
+                      <v-col class="d-flex justify-end padding-bottom-0 small-title">
+                        <b>Total: </b> $[[calculated_order.delivery.price]]
+                      </v-col>
+                    </v-row>
+                  </v-card-text>
+
+                  <v-divider class="mx-4 red darken-4"></v-divider>
+                  <v-row>
+                    <v-col class="d-flex justify-end subtitle total">
+                      <b>Total: </b> $[[calculated_order.total_order_price]]
+                    </v-col>
+                  </v-row>
+                  <v-row v-if="status == 'REGISTERED'">
+                    <v-col class="d-flex justify-center">
+                      <b class="subtitle primary--text">¡Compra realizada!</b>
+                    </v-col>
+                  </v-row>
+                  <v-row>
+                    <v-col class="d-flex justify-center">
+                      <v-btn
+                        v-if="status == 'SENDED' || status == 'REGISTERING'"
+                        color="primary"
+                        @click="registerOrder"
+                        :loading="status == 'REGISTERING'">
+                        Realizar compra
+                      </v-btn>
+                      <v-btn
+                        v-if="status == 'REGISTERED'"
+                        color="primary"
+                        @click="newOrder()"
+                      >
+                        Realizar nueva compra
+                      </v-btn>
+                    </v-col>
+                  </v-row>
                 </v-card>
               </v-col>
             </v-row>
@@ -366,46 +408,41 @@
             available_drinks: available_drinks,
             // Order data
             checkbox_drink: false,
-            checkbox_delivery: true,
+            checkbox_delivery: false,
             order: {
               client: {
-                name: 'Alba',
-                last_name: 'Sanchez',
-                email: 'alba@g.c',
+                name: '',
+                last_name: '',
+                email: '',
               },
               pizzas: [
                 {
-                  size: {id: 1, name: "Grande", price: 20},
+                  size: null,
                   ingredients: [],
                 },
-                {
-                  size: { id: 2, name: "Mediana", price: 16 },
-                  ingredients: [{ id: 9, name: "Maíz", price: 2.5 }, { id: 12, name: "Tomates secos", price: 7 }],
-                },
-                {
-                  size: { id: 2, name: "Mediana", price: 16 },
-                  ingredients: [{ id: 11, name: "Cebolla", price: 2 }, { id: 16, name: "Tocineta", price: 4.7 }, { id: 15, name: "Piña", price: 3 }],
-                },
               ],
-              drinks: [{ id: 10, name: "Jugo", price: 3.5 }, { id: 9, name: "Refresco", price: 4 }],
+              drinks: [],
               delivery: {
-                direction: "Calle B",
+                direction: "",
                 price: 5
               }
             },
+            calculated_order: null
         },
         methods: {
           async calculateOrder(){
             this.status = "SENDING"
-            test = await sendRequest("{% url 'calculate-order' %}", "{{ csrf_token }}", {"order": this.order})
+            calculated_order = await sendRequest("{% url 'calculate-order' %}", "{{ csrf_token }}", {"order": this.order})
             this.status = "SENDED"
-
-            console.log(test)
+            this.calculated_order = { client: this.order.client, ...calculated_order }
           },
           async registerOrder() {
             this.status = "REGISTERING"
-            await sendRequest("{% url 'calculate-order' %}", "{{ csrf_token }}", { "order": this.order })
+            await sendRequest("{% url 'register-order' %}", "{{ csrf_token }}", { "order": this.calculated_order })
             this.status = "REGISTERED"
+          },
+          newOrder(){
+            location.reload()
           },
           invalidPizzas() {
             let invalid = false;
