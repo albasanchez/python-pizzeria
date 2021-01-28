@@ -33,6 +33,12 @@ def main(request):
 
   return HttpResponse(template.render(context, request))      
 
+def calculateOrder(request):
+  data = json.loads(request.body)
+  print(data)
+  print(data["username"])
+  return HttpResponse(data["username"])
+
 def registerOrder(request):
   data = json.loads(request.body)
   print(data)
