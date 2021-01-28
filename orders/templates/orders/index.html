@@ -22,7 +22,7 @@
       <v-app>
         <v-app-bar app color="red darken-4" dark dense>
           <v-app-bar-nav-icon><v-icon>mdi-pizza</v-icon></v-app-bar-nav-icon>
-          <v-toolbar-title>¡Elabora tu orden aquí!</v-toolbar-title>
+          <v-toolbar-title>Pizzeria UCAB: ¡Elabora tu orden aquí!</v-toolbar-title>
         </v-app-bar>
         <v-main class="background">
           <v-container fluid>
@@ -114,7 +114,7 @@
                               <v-icon>mdi-close</v-icon>
                             </v-btn>
                           </v-card-title>
-                          <v-row>
+                          <v-row class="card-row">
                             <v-col>
                               <v-select
                                 v-model="order.pizzas[index].size"
@@ -127,9 +127,11 @@
                               ></v-select>
                             </v-col>
                           </v-row>
-                          <v-row>
-                            <v-col cols="4" v-for="(ingredient, ing_index) in available_ingredients" :key="ing_index">
+                          <v-card-title class="subtitle">Ingredientes</v-card-title>
+                          <v-row class="card-row">
+                            <v-col cols="3" v-for="(ingredient, ing_index) in available_ingredients" :key="ing_index">
                               <v-checkbox
+                                class="ingredient-checkbox"
                                 v-model="order.pizzas[index].ingredients"
                                 :label="ingredient.name"
                                 :value="ingredient.name"
@@ -165,13 +167,13 @@
                         </v-row>
                         <v-card v-for="(drink, index) in order.drinks" :key="index"  class="mb-12" color="grey lighten-3" elevation="0">
                           <v-card-title>
-                            Drink #[[index+1]]
+                            Bebida #[[index+1]]
                             <v-spacer></v-spacer>
                             <v-btn icon color="red darken-4" @click="order.drinks.splice(index, 1)">
                               <v-icon>mdi-close</v-icon>
                             </v-btn>
                           </v-card-title>
-                          <v-row>
+                          <v-row class="card-row">
                             <v-col>
                               <v-select
                                 v-model="order.drinks[index].name"
@@ -199,22 +201,22 @@
                       </v-stepper-content>
 
                       <v-stepper-content step="4">
-                        <v-row>
+                        <v-row class="checkbox-row">
                           <v-col>
                             <v-checkbox
                               v-model="checkbox_delivery"
-                              :label="'¿Desea agregar delivery por un precio de $'+ [[delivery_price]] + '?'"
+                              :label="'¿Desea agregar delivery por un precio de $'+ [[order.delivery.cost]] + '?'"
                             ></v-checkbox>
                           </v-col>
                         </v-row>
-                        <v-row v-if="checkbox_delivery">
+                        <v-row v-if="checkbox_delivery" class="delivery-row">
                           <v-col>
                             <v-textarea
                               name="direction"
                               filled
                               label="Dirección"
                               auto-grow
-                              v-model="order.delivery"
+                              v-model="order.delivery.direction"
                             ></v-textarea>
                           </v-col>
                         </v-row>
@@ -289,7 +291,7 @@
                     <v-card-title class="subtitle">Delivery</v-card-title>
                     <v-row>
                       <v-col>
-                        <v-card-text class="content">Dirección: [[order.delivery]]</v-card-text>
+                        <v-card-text class="content">Dirección: [[order.delivery.direction]]</v-card-text>
                       </v-col>
                     </v-row>
                   </span>
@@ -326,7 +328,6 @@
             // Order data
             checkbox_drink: false,
             checkbox_delivery: false,
-            delivery_price: 5,
             order: {
               client: {
                 name: '',
@@ -340,7 +341,10 @@
                 }
               ],
               drinks: [],
-              delivery: ""
+              delivery: {
+                direction: "",
+                cost: 5
+              }
             },
         },
         methods: {
