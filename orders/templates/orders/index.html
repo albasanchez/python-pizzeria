@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Vue.js Test Page</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script type='text/javascript'>
+      const items = {{ array_data|safe }};
+      const counter = {{ int_data|safe }};
+    </script>
+  </head>
+  <body>
+    <p>This is my page</p>
+    <h2>Int test: {{int_data}}</h2>
+    <h2>Str test: {{str_data}}</h2>
+    <hr>
+    <div id="app">
+      <p>[[ message ]]</p>
+      <p>Contador: [[counter]]</p>
+      <button @click="addCounter">+1</button>
+      <button @click="removeCounter">-1</button>
+      <ul>
+        <li v-for="item in items">
+          <p>[[ item ]]</p>
+        </li>
+      </ul>
+      <button @click="changeView">Change View</button>
+    </div>
+
+    <script>
+      var app = new Vue({
+        delimiters: ['[[', ']]'],
+        el: '#app',
+        data: {
+            message: 'Hello Vue!',
+            items: items,
+            counter: counter,
+        },
+        methods: {
+          addCounter(){
+            this.counter++;
+          },
+          removeCounter(){
+            this.counter--;
+          },
+          changeView(){
+            window.location.href = '/test';
+          },
+        },
+        watch: {
+          counter: function (val) {
+            if(val < 0){
+              alert("Números negativos!")
+            }
+          }
+        }
+      });
+    </script>
+  </body>
+</html>
