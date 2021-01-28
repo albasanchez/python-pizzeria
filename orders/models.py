@@ -19,6 +19,7 @@ class Order(models.Model):
   def Cliente(self):
     return self.fk_client.name + ' ' + self.fk_client.last_name
   
+  '''
   def TamanoPizza(self):
     pizzas = Pizza.objects.all()
     for pizza in pizzas:
@@ -37,6 +38,7 @@ class Order(models.Model):
             ingredients.append(pi.fk_ingredient.name)
         
     return ingredients
+  '''
 
 # Pizza
 class Size(models.Model):
@@ -60,6 +62,12 @@ class Pizza(models.Model):
 
   def __str__(self):
     return str(self.id)
+  
+  def orderPrice(self):
+    orders = Order.objects.all()
+    for order in orders:
+      if order.id == self.fk_order.id:
+        return order.price
 
 class Pizza_Ingredient(models.Model):
   fk_pizza = models.ForeignKey(Pizza, on_delete=models.CASCADE)

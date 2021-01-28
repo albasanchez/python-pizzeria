@@ -32,11 +32,15 @@ class OrderAdmin(admin.ModelAdmin):
     list_display = ('price', 'date', 'Cliente')
     #list_filter = (OrderBySizeListFilter,)
 
+class PizzaAdmin(admin.ModelAdmin):
+    list_display = ('id', 'fk_order', 'orderPrice', 'fk_size', 'price')
+    list_filter = ('fk_size',)
+
 admin.site.register(Client)
 admin.site.register(Order, OrderAdmin)
 admin.site.register(Size)
 admin.site.register(Ingredient)
-admin.site.register(Pizza)
+admin.site.register(Pizza, PizzaAdmin)
 admin.site.register(Pizza_Ingredient)
 admin.site.register(Drink)
 admin.site.register(Order_Drink)
