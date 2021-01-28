@@ -3,10 +3,33 @@
 }
 
 .subtitle {
-  font-size: 16px;
+  font-size: 18px;
+}
+
+.small-title {
+  font-size: 15px;
+}
+
+.padding-top-0 {
+  padding-top: 0;
+}
+
+.padding-bottom-0 {
   padding-bottom: 0;
 }
 
-.content {
-  padding-top: 0;
+.add-button {
+  margin-bottom: 15px;
+}
+
+.card-row {
+  padding: 0 15px;
+}
+
+.ingredient-checkbox {
+  max-height: 40px;
+}
+
+.delivery-row {
+  margin-top: 0 !important;
 }

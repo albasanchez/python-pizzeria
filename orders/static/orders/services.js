@@ -1,4 +1,4 @@
-function registerOrder(url, csrf_token, data){
+function sendRequest(url, csrf_token, data){
   return new Promise((resolve, reject) => {
     axios({
       method : "POST",
