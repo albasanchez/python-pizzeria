@@ -256,23 +256,26 @@
               </v-col>
               <v-col v-if="status!=='ORDERING' && status!=='SENDING'">
                 <v-card elevation="2">
-                  <v-card-title>Resumen</v-card-title>
+                  <v-card-title>
+                    Resumen
+                    <v-spacer></v-spacer>
+                    <span>
+                      <p class="no-margin body-2">
+                        <b>Nombre:</b> [[calculated_order.client.name]] [[calculated_order.client.last_name]]
+                      </p>
+                      <p class="no-margin body-2">
+                        <b>Email:</b> [[calculated_order.client.email]]
+                      </p>
+                    </span>
+                  </v-card-title>
 
-                  <!-- Cliente -->
-                  <v-divider class="mx-4 red darken-4"></v-divider>
-                  <v-card-title class="subtitle padding-bottom-0">Cliente</v-card-title>
-                  <v-card-text class="padding-top-0" >
-                    <b>Nombre:</b> [[calculated_order.client.name]] [[calculated_order.client.last_name]] <br>
-                    <b>Email:</b> [[calculated_order.client.email]]
-                  </v-card-text>
-                  
                   <!-- Pizzas -->
-                  <v-divider class="mx-4 red darken-4"></v-divider>
+                  <v-divider class="mx-4 gray"></v-divider>
                   <v-card-title class="subtitle padding-bottom-0">Pizzas</v-card-title>
                   <v-card-text class="padding-top-0">
                     <v-row>
                       <v-col
-                        cols="3"
+                        cols="4"
                         v-for="(pizza, index) in calculated_order.pizzas.pizzas"
                         :key="index"
                         class="d-flex align-start flex-column"
@@ -280,6 +283,9 @@
                         <span class="mb-auto">
                           <b class="small-title">Pizza [[index+1]]</b> <br>
                           <b>Tamaño:</b> [[pizza.size.name]] <br>
+                          <span v-if="!pizza.ingredients.length>0">
+                            <b>Pizza margarita</b>
+                          </span>
                           <span v-if="pizza.ingredients.length>0">
                             <b>Ingredientes:</b>
                             <ul>
@@ -290,8 +296,8 @@
                           </span>
                         </span>
                         <v-row class="item-total">
-                          <v-col class="d-flex justify-end total-col padding-x-0 padding-top-0">
-                            <b>Total: </b> $[[pizza.total_pizza_price]]
+                          <v-col class="padding-x-0 padding-top-0">
+                            <b>Precio: </b> $[[pizza.total_pizza_price]]
                           </v-col>
                         </v-row>
                       </v-col>
@@ -304,25 +310,21 @@
                     </v-row>
                   </v-card-text>
 
-                  <v-divider v-if="calculated_order.drinks.drinks.length>0" class="mx-4 red darken-4"></v-divider>
+                  <v-divider v-if="calculated_order.drinks.drinks.length>0" class="mx-4 gray"></v-divider>
                   <v-card-title v-if="calculated_order.drinks.drinks.length>0" class="subtitle padding-bottom-0">Bebidas</v-card-title>
                   <v-card-text v-if="calculated_order.drinks.drinks.length>0" class="padding-top-0">
                     <v-row>
                       <v-col
-                        cols="3"
+                        cols="4"
                         v-for="(drink, index) in calculated_order.drinks.drinks" :key="index"
                         :key="index"
                         class="d-flex align-start flex-column"
                       >
                         <span class="mb-auto">
                           <b class="small-title">Bebida [[index+1]]</b> <br>
-                          [[drink.name]]
+                          [[drink.name]] <br>
+                          <b>Precio: </b> $[[drink.price]]
                         </span>
-                        <v-row class="item-total">
-                          <v-col class="d-flex justify-end total-col padding-x-0 padding-top-0">
-                            <b>Total: </b> $[[drink.price]]
-                          </v-col>
-                        </v-row>
                       </v-col>
                     </v-row>
                     <v-divider></v-divider>
@@ -333,7 +335,7 @@
                     </v-row>
                   </v-card-text>
 
-                  <v-divider v-if="calculated_order.delivery.direction" class="mx-4 red darken-4"></v-divider>
+                  <v-divider v-if="calculated_order.delivery.direction" class="mx-4 gray"></v-divider>
                   <v-card-title v-if="calculated_order.delivery.direction" class="subtitle padding-bottom-0">Delivery</v-card-title>
                   <v-card-text v-if="calculated_order.delivery.direction" class="padding-top-0">
                     <b>Dirección:</b> [[calculated_order.delivery.direction]]
@@ -345,7 +347,7 @@
                     </v-row>
                   </v-card-text>
 
-                  <v-divider class="mx-4 red darken-4"></v-divider>
+                  <v-divider class="mx-4 gray"></v-divider>
                   <v-row>
                     <v-col class="d-flex justify-end subtitle total">
                       <b>Total: </b> $[[calculated_order.total_order_price]]

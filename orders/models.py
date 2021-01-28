@@ -8,6 +8,22 @@ class Client(models.Model):
   def __str__(self):
     return self.name + ' ' + self.last_name
   
+  def order(self):
+    orders = Order.objects.all()
+    orderList = []
+    for order in orders:
+      if order.fk_client.id == self.id:
+        orderList.append(order)
+    return orderList
+  
+  def totalOrderPrice(self):
+    orders = Order.objects.all()
+    orderPrice = 0
+    for order in orders:
+      if order.fk_client.id == self.id:
+        orderPrice = orderPrice + order.price
+    return orderPrice
+  
 class Order(models.Model):
   date = models.DateTimeField()
   price = models.FloatField(default=0)
@@ -18,27 +34,6 @@ class Order(models.Model):
 
   def Cliente(self):
     return self.fk_client.name + ' ' + self.fk_client.last_name
-  
-  '''
-  def TamanoPizza(self):
-    pizzas = Pizza.objects.all()
-    for pizza in pizzas:
-      if pizza.fk_order.id == self.id:
-        return pizza.fk_size
-
-  def Ingredientes(self):
-    ingredientes = Ingredient.objects.all()
-    pizzas = Pizza.objects.all()
-    pizzaIng = Pizza_Ingredient.objects.all()
-    ingredients = []
-    for pizza in pizzas:
-      if pizza.fk_order.id == self.id:
-        for pi in pizzaIng:
-          if pizza.id == pi.fk_pizza.id:
-            ingredients.append(pi.fk_ingredient.name)
-        
-    return ingredients
-  '''
 
 # Pizza
 class Size(models.Model):
@@ -54,6 +49,28 @@ class Ingredient(models.Model):
 
   def __str__(self):
     return self.name
+
+  def order(self):
+    pizzas = Pizza.objects.all()
+    pizzaIng = Pizza_Ingredient.objects.all()
+    orderList = []
+    for pi in pizzaIng:
+      if pi.fk_ingredient.id == self.id:
+        for pizza in pizzas:
+          if pizza.id == pi.fk_pizza.id:
+            orderList.append(pizza.fk_order)
+    return orderList
+  
+  def totalOrderPrice(self):
+    pizzas = Pizza.objects.all()
+    pizzaIng = Pizza_Ingredient.objects.all()
+    orderPrice = 0
+    for pi in pizzaIng:
+      if pi.fk_ingredient.id == self.id:
+        for pizza in pizzas:
+          if pizza.id == pi.fk_pizza.id:
+            orderPrice = orderPrice + pizza.fk_order.price
+    return orderPrice
 
 class Pizza(models.Model):
   price = models.FloatField(default=0)
