@@ -8,6 +8,14 @@ class Client(models.Model):
   def __str__(self):
     return self.name + ' ' + self.last_name
   
+  def order(self):
+    orders = Order.objects.all()
+    orderList = []
+    for order in orders:
+      if order.fk_client.id == self.id:
+        orderList.append(order)
+    return orderList
+  
 class Order(models.Model):
   date = models.DateTimeField()
   price = models.FloatField(default=0)
@@ -18,27 +26,6 @@ class Order(models.Model):
 
   def Cliente(self):
     return self.fk_client.name + ' ' + self.fk_client.last_name
-  
-  '''
-  def TamanoPizza(self):
-    pizzas = Pizza.objects.all()
-    for pizza in pizzas:
-      if pizza.fk_order.id == self.id:
-        return pizza.fk_size
-
-  def Ingredientes(self):
-    ingredientes = Ingredient.objects.all()
-    pizzas = Pizza.objects.all()
-    pizzaIng = Pizza_Ingredient.objects.all()
-    ingredients = []
-    for pizza in pizzas:
-      if pizza.fk_order.id == self.id:
-        for pi in pizzaIng:
-          if pizza.id == pi.fk_pizza.id:
-            ingredients.append(pi.fk_ingredient.name)
-        
-    return ingredients
-  '''
 
 # Pizza
 class Size(models.Model):
