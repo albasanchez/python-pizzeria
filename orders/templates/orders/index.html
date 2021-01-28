@@ -2,39 +2,255 @@
 <html>
   <head>
     <meta charset="utf-8">
-    <title>Vue.js Test Page</title>
-    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <title>Pizzeria UCAB</title>
     <script type='text/javascript'>
       const items = {{ array_data|safe }};
       const counter = {{ int_data|safe }};
     </script>
+    <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/@mdi/font@4.x/css/materialdesignicons.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.min.css" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui">
+    {% load static %}
+    <link rel="stylesheet" type="text/css" href="{% static 'orders/style.css' %}">
   </head>
   <body>
-    <p>This is my page</p>
-    <h2>Int test: {{int_data}}</h2>
-    <h2>Str test: {{str_data}}</h2>
-    <hr>
     <div id="app">
-      <p>[[ message ]]</p>
-      <p>Contador: [[counter]]</p>
-      <button @click="addCounter">+1</button>
-      <button @click="removeCounter">-1</button>
-      <ul>
-        <li v-for="item in items">
-          <p>[[ item ]]</p>
-        </li>
-      </ul>
-      <button @click="changeView">Change View</button>
+      <v-app>
+        <v-app-bar app color="red darken-4" dark dense>
+          <v-app-bar-nav-icon><v-icon>mdi-pizza</v-icon></v-app-bar-nav-icon>
+          <v-toolbar-title>¡Elabora tu orden aquí!</v-toolbar-title>
+        </v-app-bar>
+        <v-main class="background">
+          <v-container fluid>
+            <v-row>
+              <v-col cols="8">
+                <v-form ref="form" v-model="valid" lazy-validation>
+                  <v-stepper v-model="e1">
+                    <v-stepper-header>
+                      <v-stepper-step :complete="e1 > 1" step="1">
+                        Cliente
+                      </v-stepper-step>
+                  
+                      <v-divider></v-divider>
+                  
+                      <v-stepper-step :complete="e1 > 2" step="2">
+                        Pizzas
+                      </v-stepper-step>
+                  
+                      <v-divider></v-divider>
+                  
+                      <v-stepper-step :complete="e1 > 3" step="3">
+                        Bebidas
+                      </v-stepper-step>
+
+                      <v-divider></v-divider>
+                      
+                      <v-stepper-step step="4">
+                        Delivery
+                      </v-stepper-step>
+                    </v-stepper-header>
+                  
+                    <v-stepper-items>
+                      <v-stepper-content step="1">
+                        <v-row>
+                          <v-col cols="6">
+                            <v-text-field
+                              v-model="name"
+                              :rules="nameRules"
+                              label="Nombre"
+                              required
+                            ></v-text-field>
+                          </v-col>
+                          <v-col cols="6">
+                            <v-text-field
+                              v-model="last_name"
+                              :rules="nameRules"
+                              label="Apellido"
+                              required
+                            ></v-text-field>
+                          </v-col>
+                        </v-row>
+                        <v-row>
+                          <v-col>
+                            <v-text-field
+                              v-model="email"
+                              :rules="emailRules"
+                              label="Email"
+                              required
+                            ></v-text-field>
+                          </v-col>
+                        </v-row>
+                        <v-row>
+                          <v-col cols="10"></v-col>
+                          <v-col cols="2">
+                            <v-btn color="primary" @click="e1 = 2">
+                              Continuar
+                            </v-btn>
+                          </v-col>
+                        </v-row>
+                      </v-stepper-content>
+                  
+                      <v-stepper-content step="2">
+                        <v-card class="mb-12" color="grey lighten-1" height="200px"></v-card>
+                
+                        <v-row>
+                          <v-col cols="8"></v-col>
+                          <v-col cols="4">
+                            <v-btn text @click="e1 = 1">
+                              Volver
+                            </v-btn>
+                            <v-btn color="primary" @click="e1 = 3">
+                              Continuar
+                            </v-btn>
+                          </v-col>
+                        </v-row>
+                      </v-stepper-content>
+                  
+                      <v-stepper-content step="3">
+                        <v-row>
+                          <v-col>
+                            <v-checkbox
+                              v-model="checkbox_drink"
+                              label="¿Desea agregar bebidas a su orden?"
+                            ></v-checkbox>
+                          </v-col>
+                        </v-row>
+                        <v-row v-if="checkbox_drink">
+                          <v-col>
+                            <v-card class="mb-12" color="grey lighten-1" height="200px"></v-card>
+                          </v-col>
+                        </v-row>
+                  
+                        <v-row>
+                          <v-col cols="8"></v-col>
+                          <v-col cols="4">
+                            <v-btn text @click="e1 = 2">
+                              Volver
+                            </v-btn>
+                            <v-btn color="primary" @click="e1 = 4">
+                              Continuar
+                            </v-btn>
+                          </v-col>
+                        </v-row>
+                      </v-stepper-content>
+
+                      <v-stepper-content step="4">
+                        <v-row>
+                          <v-col>
+                            <v-checkbox
+                              v-model="checkbox_delivery"
+                              :label="'¿Desea agregar delivery por un precio de $'+ [[delivery_price]] + '?'"
+                            ></v-checkbox>
+                          </v-col>
+                        </v-row>
+                        <v-row v-if="checkbox_delivery">
+                          <v-col>
+                            <v-textarea
+                              name="direction"
+                              filled
+                              label="Dirección"
+                              auto-grow
+                              v-model="direction"
+                            ></v-textarea>
+                          </v-col>
+                        </v-row>
+                      
+                        <v-row>
+                          <v-col cols="8"></v-col>
+                          <v-col cols="4">
+                            <v-btn text @click="e1 = 3">
+                              Volver
+                            </v-btn>
+                            <v-btn color="primary" @click="e1 = 4" :disabled="!valid">
+                              Registrar
+                            </v-btn>
+                          </v-col>
+                        </v-row>
+                      </v-stepper-content>
+                    </v-stepper-items>
+                  </v-stepper>
+                </v-form>
+              </v-col>
+              <v-col cols="4">
+                <v-card elevation="2">
+                  <v-card-title>Cliente</v-card-title>
+                  
+                  <v-row>
+                    <v-col>
+                      <v-card-text>[[name]] [[last_name]]</v-card-text>
+                    </v-col>
+                    <v-col>
+                      <v-card-text>[[email]]</v-card-text>
+                    </v-col>
+                  </v-row>
+                  
+                  <v-divider class="mx-4"></v-divider>
+
+                  <v-card-title>Pizzas</v-card-title>
+                  
+                  <v-row>
+                    <v-col>
+                      <v-card-text>Detalle</v-card-text>
+                    </v-col>
+                  </v-row>
+
+                  <v-divider v-if="checkbox_drink" class="mx-4"></v-divider>
+                  
+                  <v-card-title v-if="checkbox_drink">Bebidas</v-card-title>
+                  
+                  <v-row v-if="checkbox_drink">
+                    <v-col>
+                      <v-card-text>Detalle</v-card-text>
+                    </v-col>
+                  </v-row>
+
+                  <v-divider v-if="checkbox_delivery" class="mx-4"></v-divider>
+                  
+                  <v-card-title v-if="checkbox_delivery">Delivery</v-card-title>
+                  
+                  <v-row v-if="checkbox_delivery">
+                    <v-col>
+                      <v-card-text>Dirección: [[direction]]</v-card-text>
+                    </v-col>
+                  </v-row>
+                </v-card>
+              </v-col>
+            </v-row>
+          </v-container>
+        </v-main>
+      </v-app>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.x/dist/vue.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.js"></script>
     <script>
       var app = new Vue({
         delimiters: ['[[', ']]'],
         el: '#app',
+        vuetify: new Vuetify(),
         data: {
-            message: 'Hello Vue!',
+            e1: 1,
             items: items,
             counter: counter,
+            valid: true,
+            name: '',
+            last_name: '',
+            nameRules: [
+              v => !!v || 'Name is required',
+              v => (v && v.length <= 10) || 'Name must be less than 10 characters',
+            ],
+            email: '',
+            emailRules: [
+              v => !!v || 'E-mail is required',
+              v => /.+@.+\..+/.test(v) || 'E-mail must be valid',
+            ],
+            pizzas: [],
+            checkbox_drink: false,
+            drinks: [],
+            checkbox_delivery: false,
+            delivery_price: 5,
+            direction: ""
         },
         methods: {
           addCounter(){
