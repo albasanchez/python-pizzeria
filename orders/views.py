@@ -48,7 +48,11 @@ def calculateOrder(request):
   total_order_price = 0
   total_pizzas = 0
   total_drinks = 0
-  total_delivery = delivery["price"]
+  
+  if delivery["direction"] == "":
+    total_delivery = 0
+  else:
+    total_delivery = delivery["price"]
 
   template_drinks = {"drinks": drinks, "total": len(drinks), "total_drinks_price": 0}
   template_delivery = {"price": delivery["price"], "direction": delivery["direction"]}
