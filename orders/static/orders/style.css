@@ -28,6 +28,10 @@
   padding-right: 0;
 }
 
+.no-margin {
+  margin: 0 !important;
+}
+
 .add-button {
   margin-bottom: 15px;
 }
@@ -48,10 +52,6 @@
   align-items: flex-end;
   width: 100%;
   margin: 0;
-}
-
-.total-col {
-  border-top: 1px solid lightgray;
 }
 
 .total {
