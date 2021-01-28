@@ -3,7 +3,7 @@ from django.contrib import admin
 from .models import Client, Order, Size, Ingredient, Pizza, Pizza_Ingredient, Drink, Order_Drink, Delivery
 
 admin.site.register(Client)
-admin.site.register(Order)
+admin.site.register(Order, OrderAdmin)
 admin.site.register(Size)
 admin.site.register(Ingredient)
 admin.site.register(Pizza)
