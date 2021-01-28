@@ -22,13 +22,13 @@
       <v-app>
         <v-app-bar app color="red darken-4" dark dense>
           <v-app-bar-nav-icon><v-icon>mdi-pizza</v-icon></v-app-bar-nav-icon>
-          <v-toolbar-title v-if="status!='SENDED'">Pizzeria UCAB: ¡Elabora tu orden aquí!</v-toolbar-title>
-          <v-toolbar-title v-if="status=='SENDED'">Pizzeria UCAB: ¡Verifica tu pedido!</v-toolbar-title>
+          <v-toolbar-title v-if="status=='ORDERING' || status=='SENDING'">Pizzeria UCAB: ¡Elabora tu orden aquí!</v-toolbar-title>
+          <v-toolbar-title v-if="status!=='ORDERING' && status!=='SENDING'">Pizzeria UCAB: ¡Verifica tu pedido!</v-toolbar-title>
         </v-app-bar>
         <v-main class="background">
           <v-container fluid>
             <v-row>
-              <v-col v-if="status==''">
+              <v-col v-if="status=='ORDERING' || status=='SENDING'">
                 <v-form ref="form" v-model="valid" lazy-validation>
                   <v-stepper v-model="e1">
                     <v-stepper-header>
@@ -243,7 +243,9 @@
                               color="primary"
                               @click="calculateOrder"
                               :loading="status == 'SENDING'"
-                              :disabled="invalidDirection()">
+                              :disabled="invalidDirection()"
+                            >
+                              Ver detalle
                             </v-btn>
                           </v-col>
                         </v-row>
@@ -252,7 +254,7 @@
                   </v-stepper>
                 </v-form>
               </v-col>
-              <v-col v-if="status=='SENDED'">
+              <v-col v-if="status!=='ORDERING' && status!=='SENDING'">
                 <v-card elevation="2">
                   <v-card-title>Resumen</v-card-title>
 
@@ -322,6 +324,14 @@
                       </v-col>
                     </v-row>
                   </span>
+
+                  <v-divider class="mx-4"></v-divider>
+                  <v-btn
+                    color="primary"
+                    @click="registerOrder"
+                    :loading="status == 'REGISTERING'">
+                    Realizar compra
+                  </v-btn>
                 </v-card>
               </v-col>
             </v-row>
@@ -348,7 +358,8 @@
               v => /.+@.+\..+/.test(v) || 'E-mail must be valid',
             ],
             valid: true,
-            status: "",
+            // STATUS = "ORDERING" | "SENDING" | "SENDED" | "REGISTERING" | "REGISTERED"
+            status: "ORDERING",
             // DB Data
             available_sizes: available_sizes,
             available_ingredients: available_ingredients,
@@ -390,6 +401,11 @@
             this.status = "SENDED"
 
             console.log(test)
+          },
+          async registerOrder() {
+            this.status = "REGISTERING"
+            await sendRequest("{% url 'calculate-order' %}", "{{ csrf_token }}", { "order": this.order })
+            this.status = "REGISTERED"
           },
           invalidPizzas() {
             let invalid = false;
