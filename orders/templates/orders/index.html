@@ -241,10 +241,9 @@
                             </v-btn>
                             <v-btn
                               color="primary"
-                              @click="registerOrder"
-                              :loading="status == SENDING"
+                              @click="calculateOrder"
+                              :loading="status == 'SENDING'"
                               :disabled="invalidDirection()">
-                              Ver resumen
                             </v-btn>
                           </v-col>
                         </v-row>
@@ -385,9 +384,9 @@
             },
         },
         methods: {
-          async registerOrder(){
+          async calculateOrder(){
             this.status = "SENDING"
-            await registerOrder("{% url 'register-order' %}", "{{ csrf_token }}", {"order": this.order})
+            await sendRequest("{% url 'calculate-order' %}", "{{ csrf_token }}", {"order": this.order})
             this.status = "SENDED"
           },
           invalidPizzas() {
