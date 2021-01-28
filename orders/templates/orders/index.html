@@ -82,8 +82,7 @@
                           </v-col>
                         </v-row>
                         <v-row>
-                          <v-col cols="10"></v-col>
-                          <v-col cols="2">
+                          <v-col class="d-flex justify-end">
                             <v-btn color="primary" @click="e1 = 2">
                               Continuar
                             </v-btn>
@@ -92,11 +91,47 @@
                       </v-stepper-content>
                   
                       <v-stepper-content step="2">
-                        <v-card class="mb-12" color="grey lighten-1" height="200px"></v-card>
+                        <v-card v-for="(pizza, index) in pizzas" class="mb-12" color="grey lighten-3" elevation="0">
+                          <v-card-title>
+                            Pizza #[[index+1]]
+                            <v-spacer></v-spacer>
+                            <v-btn v-if="pizzas.length!=1" icon color="red darken-4" @click="pizzas.splice(index, 1)">
+                              <v-icon>mdi-close</v-icon>
+                            </v-btn>
+                          </v-card-title>
+                          <v-row>
+                            <v-col>
+                              <v-select
+                                v-model="pizzas[index].size"
+                                :items="pizza_sizes"
+                                item-text="name"
+                                item-value="name"
+                                :rules="[v => !!v || 'Item is required']"
+                                label="Tamaño"
+                                required
+                              ></v-select>
+                            </v-col>
+                          </v-row>
+                          <v-row>
+                            <v-col cols="4" v-for="ingredient in pizza_ingredients">
+                              <v-checkbox
+                                v-model="pizzas[index].ingredients"
+                                :label="ingredient.name"
+                                :value="ingredient.name"
+                              ></v-checkbox>
+                            </v-col>
+                          </v-row>
+                        </v-card>
+                        <v-row>
+                          <v-col class="d-flex justify-center">
+                            <v-btn color="red darken-4" dark @click="pizzas.push({size: null, ingredients: []})">
+                              Agregar pizza
+                            </v-btn>
+                          </v-col>
+                        </v-row>
                 
                         <v-row>
-                          <v-col cols="8"></v-col>
-                          <v-col cols="4">
+                          <v-col class="d-flex justify-end">
                             <v-btn text @click="e1 = 1">
                               Volver
                             </v-btn>
@@ -110,21 +145,40 @@
                       <v-stepper-content step="3">
                         <v-row>
                           <v-col>
-                            <v-checkbox
-                              v-model="checkbox_drink"
-                              label="¿Desea agregar bebidas a su orden?"
-                            ></v-checkbox>
-                          </v-col>
-                        </v-row>
-                        <v-row v-if="checkbox_drink">
-                          <v-col>
-                            <v-card class="mb-12" color="grey lighten-1" height="200px"></v-card>
+                            <v-card v-for="(drink, index) in drinks" class="mb-12" color="grey lighten-3" elevation="0">
+                              <v-card-title>
+                                Drink #[[index+1]]
+                                <v-spacer></v-spacer>
+                                <v-btn icon color="red darken-4" @click="drinks.splice(index, 1)">
+                                  <v-icon>mdi-close</v-icon>
+                                </v-btn>
+                              </v-card-title>
+                              <v-row>
+                                <v-col>
+                                  <v-select
+                                    v-model="drinks[index].name"
+                                    :items="available_drinks"
+                                    item-text="name"
+                                    item-value="name"
+                                    :rules="[v => !!v || 'Item is required']"
+                                    label="Bebida"
+                                    required
+                                  ></v-select>
+                                </v-col>
+                              </v-row>
+                            </v-card>
+                            <v-row>
+                              <v-col class="d-flex justify-center">
+                                <v-btn color="red darken-4" dark @click="drinks.push({name: null, id: null})">
+                                  Agregar bebida
+                                </v-btn>
+                              </v-col>
+                            </v-row>
                           </v-col>
                         </v-row>
                   
                         <v-row>
-                          <v-col cols="8"></v-col>
-                          <v-col cols="4">
+                          <v-col class="d-flex justify-end">
                             <v-btn text @click="e1 = 2">
                               Volver
                             </v-btn>
@@ -157,8 +211,7 @@
                         </v-row>
                       
                         <v-row>
-                          <v-col cols="8"></v-col>
-                          <v-col cols="4">
+                          <v-col class="d-flex justify-end">
                             <v-btn text @click="e1 = 3">
                               Volver
                             </v-btn>
@@ -191,17 +244,30 @@
                   
                   <v-row>
                     <v-col>
-                      <v-card-text>Detalle</v-card-text>
+                      <v-card-text>
+                        <v-row v-for="(pizza, index) in pizzas">
+                          <v-col>
+                            Pizza [[index+1]]. Tamaño: [[pizza.size]]
+                            Ingredientes: [[pizza.ingredients]]
+                          </v-col>
+                        </v-row>
+                      </v-card-text>
                     </v-col>
                   </v-row>
 
-                  <v-divider v-if="checkbox_drink" class="mx-4"></v-divider>
+                  <v-divider v-if="drinks.length>0" class="mx-4"></v-divider>
                   
-                  <v-card-title v-if="checkbox_drink">Bebidas</v-card-title>
+                  <v-card-title v-if="drinks.length>0">Bebidas</v-card-title>
                   
-                  <v-row v-if="checkbox_drink">
+                  <v-row v-if="drinks.length>0">
                     <v-col>
-                      <v-card-text>Detalle</v-card-text>
+                      <v-card-text>
+                        <v-row v-for="(drink, index) in drinks">
+                          <v-col>
+                            Bebida [[index+1]]. [[drink.name]]
+                          </v-col>
+                        </v-row>
+                      </v-card-text>
                     </v-col>
                   </v-row>
 
@@ -231,8 +297,19 @@
         vuetify: new Vuetify(),
         data: {
             e1: 1,
-            items: items,
-            counter: counter,
+            pizza_sizes: [{name: "Grande", id: 1}, { name: "Mediana", id: 2 }],
+            pizza_ingredients: [
+              {name: "Jamón", id: 1},
+              { name: "Queso", id: 2 },
+              { name: "Aceitunas", id: 3},
+              { name: "Champiñones", id: 4 }
+            ],
+            available_drinks: [
+            { name: "Coca-cola", id: 1 },
+            { name: "Pepsi", id: 2 },
+            { name: "Nestea", id: 3 },
+            { name: "Agua", id: 4 }
+          ],
             valid: true,
             name: '',
             last_name: '',
@@ -245,7 +322,12 @@
               v => !!v || 'E-mail is required',
               v => /.+@.+\..+/.test(v) || 'E-mail must be valid',
             ],
-            pizzas: [],
+            pizzas: [
+              {
+                size: null,
+                ingredients: [],
+              }
+            ],
             checkbox_drink: false,
             drinks: [],
             checkbox_delivery: false,
@@ -253,22 +335,8 @@
             direction: ""
         },
         methods: {
-          addCounter(){
-            this.counter++;
-          },
-          removeCounter(){
-            this.counter--;
-          },
-          changeView(){
-            window.location.href = '/test';
-          },
         },
         watch: {
-          counter: function (val) {
-            if(val < 0){
-              alert("Números negativos!")
-            }
-          }
         }
       });
     </script>
