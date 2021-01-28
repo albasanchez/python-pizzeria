@@ -16,6 +16,14 @@ class Client(models.Model):
         orderList.append(order)
     return orderList
   
+  def totalOrderPrice(self):
+    orders = Order.objects.all()
+    orderPrice = 0
+    for order in orders:
+      if order.fk_client.id == self.id:
+        orderPrice = orderPrice + order.price
+    return orderPrice
+  
 class Order(models.Model):
   date = models.DateTimeField()
   price = models.FloatField(default=0)

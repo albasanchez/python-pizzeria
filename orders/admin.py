@@ -15,7 +15,7 @@ class IngredientAdmin(admin.ModelAdmin):
     list_filter = ('name',)
 
 class ClientAdmin(admin.ModelAdmin):
-    list_display = ('name', 'last_name', 'order')
+    list_display = ('name', 'last_name', 'order', 'totalOrderPrice')
     list_filter = ('name', 'last_name')
 
 admin.site.register(Client, ClientAdmin)
