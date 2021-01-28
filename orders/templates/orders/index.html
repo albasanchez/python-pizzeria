@@ -335,7 +335,7 @@
         },
         methods: {
           async registerOrder(){
-            test = await registerOrder("{% url 'register-order' %}", "{{ csrf_token }}", {"username": this.email})
+            test = await registerOrder("{% url 'register-order' %}", "{{ csrf_token }}", {"username": this.order.client.email})
             alert(`ESTA ES UNA ALERTA DE COMPRA PARA EL EMAIL: ${test}`)
           }
         },
