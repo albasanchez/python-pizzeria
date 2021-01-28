@@ -1,6 +1,10 @@
 from django.http import HttpResponse, Http404, JsonResponse
 from django.template import loader
-from .models import Drink, Ingredient, Size
+from .models import Drink, Ingredient, Size, Client, Order, Delivery, Order_Drink, Pizza, Pizza_Ingredient
+from django.db import transaction
+from django.utils import timezone
+from datetime import date
+
 import json
 
 def main(request):
@@ -44,7 +48,11 @@ def calculateOrder(request):
   total_order_price = 0
   total_pizzas = 0
   total_drinks = 0
-  total_delivery = delivery["price"]
+  
+  if delivery["direction"] == "":
+    total_delivery = 0
+  else:
+    total_delivery = delivery["price"]
 
   template_drinks = {"drinks": drinks, "total": len(drinks), "total_drinks_price": 0}
   template_delivery = {"price": delivery["price"], "direction": delivery["direction"]}
@@ -81,8 +89,44 @@ def calculateOrder(request):
 
   return JsonResponse(response)
 
+@transaction.atomic
 def registerOrder(request):
-  data = json.loads(request.body)
-  print(data)
-  print(data["order"])
-  return HttpResponse(data["order"])
+  try:
+    data = dict(json.loads(request.body))
+    order = data["order"]
+    
+    pizzas = order["pizzas"]["pizzas"]
+    drinks = order["drinks"]["drinks"]
+    delivery = order["delivery"]
+    client = order["client"]
+
+    #Registro de información del cliente
+    registered_client = None
+    email_exist = Client.objects.filter(email = client["email"]).count()
+    if email_exist > 0:
+      registered_client = Client.objects.get(email = client["email"])
+    else:
+      registered_client = Client.objects.create(name=client["name"], last_name=client["last_name"], email=client["email"])
+    
+    #Registro de información de la orden
+    registered_order = Order.objects.create(price=order["total_order_price"], fk_client=registered_client)
+
+    #Registro de información de delivery
+    registered_delivery = Delivery.objects.create(price=delivery["price"], fk_order=registered_order, direction=delivery["direction"])
+
+    #Registro de información de las bebidas en la orden
+    for drink in drinks:
+      fk_drink = Drink.objects.get(pk=drink["id"])
+      Order_Drink.objects.create(fk_order=registered_order, fk_drink=fk_drink)
+    
+    #Registro de información de las pizzas en la orden
+    for pizza in pizzas:
+      fk_size = Size.objects.get(pk=pizza["size"]["id"])
+      registered_pizza = Pizza.objects.create(price=pizza["total_pizza_price"], fk_size=fk_size, fk_order=registered_order)
+      for ingredient in pizza["ingredients"]:
+        fk_ingredient = Ingredient.objects.get(pk=ingredient["id"])
+        Pizza_Ingredient.objects.create(fk_pizza=registered_pizza, fk_ingredient=fk_ingredient)
+
+    return JsonResponse({"status": 200})
+  except:
+    return JsonResponse({"status": 500})

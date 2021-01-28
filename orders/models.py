@@ -1,9 +1,10 @@
 from django.db import models
+import datetime
 
 class Client(models.Model):
   name = models.CharField(max_length=200)
   last_name = models.CharField(max_length=200)
-  email = models.EmailField()
+  email = models.EmailField(unique=True)
 
   def __str__(self):
     return self.name + ' ' + self.last_name
@@ -25,7 +26,7 @@ class Client(models.Model):
     return orderPrice
   
 class Order(models.Model):
-  date = models.DateTimeField()
+  date = models.DateField(auto_now=True)
   price = models.FloatField(default=0)
   fk_client = models.ForeignKey(Client, on_delete=models.CASCADE)
 
