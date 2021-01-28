@@ -55,6 +55,28 @@ class Ingredient(models.Model):
   def __str__(self):
     return self.name
 
+  def order(self):
+    pizzas = Pizza.objects.all()
+    pizzaIng = Pizza_Ingredient.objects.all()
+    orderList = []
+    for pi in pizzaIng:
+      if pi.fk_ingredient.id == self.id:
+        for pizza in pizzas:
+          if pizza.id == pi.fk_pizza.id:
+            orderList.append(pizza.fk_order)
+    return orderList
+  
+  def totalOrderPrice(self):
+    pizzas = Pizza.objects.all()
+    pizzaIng = Pizza_Ingredient.objects.all()
+    orderPrice = 0
+    for pi in pizzaIng:
+      if pi.fk_ingredient.id == self.id:
+        for pizza in pizzas:
+          if pizza.id == pi.fk_pizza.id:
+            orderPrice = orderPrice + pizza.fk_order.price
+    return orderPrice
+
 class Pizza(models.Model):
   price = models.FloatField(default=0)
   fk_size = models.ForeignKey(Size, on_delete=models.CASCADE)
