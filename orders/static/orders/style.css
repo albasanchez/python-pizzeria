@@ -14,3 +14,19 @@
 .add-button {
   margin-bottom: 15px;
 }
+
+.card-row {
+  padding: 0 15px;
+}
+
+.ingredient-checkbox {
+  max-height: 40px;
+}
+
+.checkbox-row {
+  padding-bottom: 0;
+}
+
+.delivery-row {
+  margin-top: 0 !important;
+}
