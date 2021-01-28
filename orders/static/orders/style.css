@@ -1,3 +1,12 @@
 .background {
   background: white url("images/background.jpg") repeat;
 }
+
+.subtitle {
+  font-size: 16px;
+  padding-bottom: 0;
+}
+
+.content {
+  padding-top: 0;
+}
