@@ -48,14 +48,14 @@ def calculateOrder(request):
   total_order_price = 0
   total_pizzas = 0
   total_drinks = 0
-  
+
   if delivery["direction"] == "":
     total_delivery = 0
   else:
-    total_delivery = delivery["price"]
+    total_delivery = float("{0:.2f}".format(delivery["price"]))
 
   template_drinks = {"drinks": drinks, "total": len(drinks), "total_drinks_price": 0}
-  template_delivery = {"price": delivery["price"], "direction": delivery["direction"]}
+  template_delivery = {"price": total_delivery, "direction": delivery["direction"]}
   template_pizzas = {"pizzas": [], "total": len(pizzas), "total_pizzas_price": 0}
 
   #Cálculo del costo de las pizzas
@@ -66,19 +66,19 @@ def calculateOrder(request):
     for ingredient in pizza["ingredients"]:
       total_pizza_price = total_pizza_price + ingredient["price"]
     
-    template_pizzas["pizzas"].append({"total_pizza_price": total_pizza_price, "size": pizza["size"], "ingredients": pizza["ingredients"]})
+    template_pizzas["pizzas"].append({"total_pizza_price": float("{0:.2f}".format(total_pizza_price)), "size": pizza["size"], "ingredients": pizza["ingredients"]})
     total_pizzas = total_pizzas + total_pizza_price
   
-  template_pizzas["total_pizzas_price"] = total_pizzas
+  template_pizzas["total_pizzas_price"] = float("{0:.2f}".format(total_pizzas))
   
   #Cálculo del costo de las bebidas
   for drink in drinks:
     total_drinks = total_drinks + drink["price"]
 
-  template_drinks["total_drinks_price"] = total_drinks
+  template_drinks["total_drinks_price"] = float("{0:.2f}".format(total_drinks))
 
   #Cálculo del costo total de la orden
-  total_order_price = total_delivery + total_drinks + total_pizzas
+  total_order_price = float("{0:.2f}".format(total_delivery + total_drinks + total_pizzas))
 
   response = {
     "drinks": template_drinks,
@@ -112,7 +112,8 @@ def registerOrder(request):
     registered_order = Order.objects.create(price=order["total_order_price"], fk_client=registered_client)
 
     #Registro de información de delivery
-    registered_delivery = Delivery.objects.create(price=delivery["price"], fk_order=registered_order, direction=delivery["direction"])
+    if delivery["price"] != 0 and delivery["direction"] != "":
+      registered_delivery = Delivery.objects.create(price=delivery["price"], fk_order=registered_order, direction=delivery["direction"])
 
     #Registro de información de las bebidas en la orden
     for drink in drinks:
@@ -128,5 +129,6 @@ def registerOrder(request):
         Pizza_Ingredient.objects.create(fk_pizza=registered_pizza, fk_ingredient=fk_ingredient)
 
     return JsonResponse({"status": 200})
-  except:
+  except err:
+    print(err)
     return JsonResponse({"status": 500})
