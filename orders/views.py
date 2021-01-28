@@ -75,7 +75,8 @@ def calculateOrder(request):
   response = {
     "drinks": template_drinks,
     "delivery": template_delivery,
-    "pizzas": template_pizzas
+    "pizzas": template_pizzas,
+    "total_order_price": total_order_price,
   }
 
   return JsonResponse(response)
