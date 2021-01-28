@@ -7,8 +7,7 @@ class OrderAdmin(admin.ModelAdmin):
     list_filter = ('date', )
 
 class PizzaAdmin(admin.ModelAdmin):
-    list_display = ('id', 'fk_order', 'orderPrice', 'fk_size', 'price')
-    list_filter = ('fk_size',)
+    list_display = ('fk_order', 'orderPrice', 'fk_size', 'price')
 
 class IngredientAdmin(admin.ModelAdmin):
     list_display = ('name', 'price', 'order', 'totalOrderPrice')
@@ -18,9 +17,13 @@ class ClientAdmin(admin.ModelAdmin):
     list_display = ('name', 'last_name', 'order', 'totalOrderPrice')
     list_filter = ('name', 'last_name')
 
+class SizeAdmin(admin.ModelAdmin):
+    list_display = ('name', 'order', 'totalOrderPrice')
+    list_filter = ('name',)
+
 admin.site.register(Client, ClientAdmin)
 admin.site.register(Order, OrderAdmin)
-admin.site.register(Size)
+admin.site.register(Size, SizeAdmin)
 admin.site.register(Ingredient, IngredientAdmin)
 admin.site.register(Pizza, PizzaAdmin)
 admin.site.register(Pizza_Ingredient)

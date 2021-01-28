@@ -42,6 +42,28 @@ class Size(models.Model):
 
   def __str__(self):
     return self.name
+  
+  def order(self):
+    pizzas = Pizza.objects.all()
+    orders = Order.objects.all()
+    orderList= []
+    for pizza in pizzas:
+      if pizza.fk_size.id == self.id:
+        for order in orders:
+          if pizza.fk_order.id == order.id:
+            orderList.append(order)
+    return orderList
+
+  def totalOrderPrice(self):
+    pizzas = Pizza.objects.all()
+    orders = Order.objects.all()
+    orderPrice = 0
+    for pizza in pizzas:
+      if pizza.fk_size.id == self.id:
+        for order in orders:
+          if pizza.fk_order.id == order.id:
+            orderPrice = orderPrice + order.price
+    return orderPrice 
 
 class Ingredient(models.Model):
   name = models.CharField(max_length=200)
