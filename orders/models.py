@@ -33,8 +33,20 @@ class Order(models.Model):
   def __str__(self):
     return str(self.id)
 
-  def Cliente(self):
+  def client(self):
     return self.fk_client.name + ' ' + self.fk_client.last_name
+
+  def pizzas(self):
+    pizzas = Pizza.objects.filter(fk_order = self).count()
+    return pizzas
+
+  def drinks(self):
+    drinks = Order_Drink.objects.filter(fk_order = self).count()
+    return drinks
+
+  def delivery(self):
+    delivery = Delivery.objects.filter(fk_order=self).count()
+    return delivery==1
 
 # Pizza
 class Size(models.Model):
