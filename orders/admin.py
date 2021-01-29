@@ -15,7 +15,7 @@ class IngredientAdmin(admin.ModelAdmin):
     list_filter = ('name',)
 
 class ClientAdmin(admin.ModelAdmin):
-    list_display = ('name', 'last_name', 'order', 'totalOrderPrices')
+    list_display = ('name', 'last_name', 'email', 'order', 'totalOrderPrices')
     list_filter = ('name', 'last_name')
 
     def totalOrderPrices(self, obj):
