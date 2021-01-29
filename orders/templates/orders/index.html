@@ -26,6 +26,10 @@
           <v-app-bar-nav-icon><v-icon>mdi-pizza</v-icon></v-app-bar-nav-icon>
           <v-toolbar-title v-if="status=='ORDERING' || status=='SENDING'">Pizzeria UCAB: ¡Elabora tu orden aquí!</v-toolbar-title>
           <v-toolbar-title v-if="status!=='ORDERING' && status!=='SENDING'">Pizzeria UCAB: ¡Verifica tu pedido!</v-toolbar-title>
+          <v-spacer></v-spacer>
+          <v-btn small @click="goToAdminSite">
+            Sitio administrativo
+          </v-btn>
         </v-app-bar>
         <v-main class="background">
           <v-container fluid>
@@ -521,10 +525,11 @@
             } else {
               return !this.order.delivery.direction
             }
+          },
+          goToAdminSite() {
+            window.location.href = '/admin';
           }
         },
-        watch: {
-        }
       });
     </script>
   </body>
