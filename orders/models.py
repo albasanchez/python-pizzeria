@@ -83,6 +83,8 @@ class Order(models.Model):
   def delivery(self):
     delivery = Delivery.objects.filter(fk_order=self).count()
     return delivery==1
+  
+  delivery.boolean = True
 
 """
   Tamaño de la pizza. Ya sea Grande, Mediana o Personal
