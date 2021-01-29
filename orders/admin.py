@@ -25,6 +25,7 @@ class PizzaAdmin(admin.ModelAdmin):
 
 class IngredientAdmin(admin.ModelAdmin):
     list_display = ('name', 'price', 'order', 'totalOrderPrice')
+    list_filter = ('name',)
 
 class ClientAdmin(admin.ModelAdmin):
     list_display = ('name', 'last_name', 'email', 'order', 'totalOrderPrices')
@@ -42,6 +43,7 @@ class ClientAdmin(admin.ModelAdmin):
 
 class SizeAdmin(admin.ModelAdmin):
     list_display = ('name', 'order', 'totalOrderPrice')
+    list_filter = ('name',)
 
 admin.site.register(Client, ClientAdmin)
 admin.site.register(Order, OrderAdmin)
