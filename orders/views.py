@@ -7,6 +7,12 @@ from datetime import date
 
 import json
 
+
+"""
+Esta vista corresponde a la página donde se realiza el proceso de pedido.
+-Obtiene la información de los ingredientes, bebidas y tamaños de pizza
+-Renderiza el template de index.html
+"""
 def main(request):
   template = loader.get_template("orders/index.html")
   try:
@@ -37,6 +43,11 @@ def main(request):
 
   return HttpResponse(template.render(context, request))      
 
+"""
+Esta vista corresponde al cálculo de la orden.
+-Calcula el total por cada pizza.
+-Calcula el total de la orden sumando el total de las pizzas, las bebidas y el delivery.
+"""
 def calculateOrder(request):
   data = dict(json.loads(request.body))
   order = data["order"]
@@ -89,6 +100,11 @@ def calculateOrder(request):
 
   return JsonResponse(response)
 
+"""
+Esta vista corresponde al registro de la orden.
+-Registro de toda la información correspondiente a la orden.
+-Se hace uso de transacciones en caso de errores.
+"""
 @transaction.atomic
 def registerOrder(request):
   try:
