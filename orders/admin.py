@@ -3,16 +3,28 @@ from django.db.models import Count
 
 from .models import Client, Order, Size, Ingredient, Pizza, Pizza_Ingredient, Drink, Order_Drink, Delivery
 
+def custom_titled_filter(title):
+    class Wrapper(admin.FieldListFilter):
+        def __new__(cls, *args, **kwargs):
+            instance = admin.FieldListFilter.create(*args, **kwargs)
+            instance.title = title
+            return instance
+    return Wrapper
+
 class OrderAdmin(admin.ModelAdmin):
-    list_display = ('id', 'price', 'date', 'Cliente')
-    list_filter = ('date', )
+    list_display = ('id', 'client', 'price', 'date', 'pizzas', 'drinks', 'delivery')
+    list_filter = (
+        ('date', custom_titled_filter('Fecha')),
+        ('pizza__fk_size__name', custom_titled_filter('Tamaño de pizza')),
+        ('pizza__pizza_ingredient__fk_ingredient__name', custom_titled_filter('Ingrediente')),
+        ('fk_client__email', custom_titled_filter('Cliente'))
+    )
 
 class PizzaAdmin(admin.ModelAdmin):
     list_display = ('fk_order', 'orderPrice', 'fk_size', 'price')
 
 class IngredientAdmin(admin.ModelAdmin):
     list_display = ('name', 'price', 'order', 'totalOrderPrice')
-    list_filter = ('name',)
 
 class ClientAdmin(admin.ModelAdmin):
     list_display = ('name', 'last_name', 'email', 'order', 'totalOrderPrices')
@@ -30,7 +42,6 @@ class ClientAdmin(admin.ModelAdmin):
 
 class SizeAdmin(admin.ModelAdmin):
     list_display = ('name', 'order', 'totalOrderPrice')
-    list_filter = ('name',)
 
 admin.site.register(Client, ClientAdmin)
 admin.site.register(Order, OrderAdmin)
