@@ -5,9 +5,9 @@ from .models import Client, Order, Size, Ingredient, Pizza, Pizza_Ingredient, Dr
 
 def custom_titled_filter(title):
     '''
-    Se define una clase Wrapper con la finalidad de agregar
-    un titulo personalizado a las distintas columnas que poseen
-    los modelos en la zona administrativa.
+        Se define una clase Wrapper con la finalidad de agregar
+        un titulo personalizado a las distintas columnas que poseen
+        los modelos en la zona administrativa.
     '''
     class Wrapper(admin.FieldListFilter):
         def __new__(cls, *args, **kwargs):
@@ -18,9 +18,9 @@ def custom_titled_filter(title):
 
 class OrderAdmin(admin.ModelAdmin):
     '''
-    Clase que permite definir la configuracion de que, como y cuales datos se muestran
-    en la zona administrativa, correspondiente al modelo "Order". Tambien es donde se
-    definen los filtros para aplicar a los datos en la zona administrativa.
+        Clase que permite definir la configuracion de que, como y cuales datos se muestran
+        en la zona administrativa, correspondiente al modelo "Order". Tambien es donde se
+        definen los filtros para aplicar a los datos en la zona administrativa.
     '''
     list_display = ('id', 'client', 'price', 'date', 'pizzas', 'drinks', 'delivery')
     list_filter = (
@@ -32,26 +32,26 @@ class OrderAdmin(admin.ModelAdmin):
 
 class PizzaAdmin(admin.ModelAdmin):
     '''
-    Clase que permite definir la configuracion de que, como y cuales datos se muestran
-    en la zona administrativa, correspondiente al modelo "Pizza".
+        Clase que permite definir la configuracion de que, como y cuales datos se muestran
+        en la zona administrativa, correspondiente al modelo "Pizza".
     '''
     list_display = ('fk_order', 'orderPrice', 'fk_size', 'price')
 
 class IngredientAdmin(admin.ModelAdmin):
     '''
-    Clase que permite definir la configuracion de que, como y cuales datos se muestran
-    en la zona administrativa, correspondiente al modelo "Ingredient". Tambien es donde se
-    definen los filtros para aplicar a los datos en la zona administrativa.
+        Clase que permite definir la configuracion de que, como y cuales datos se muestran
+        en la zona administrativa, correspondiente al modelo "Ingredient". Tambien es donde se
+        definen los filtros para aplicar a los datos en la zona administrativa.
     '''
     list_display = ('name', 'price', 'order', 'totalOrderPrice')
     list_filter = ('name',)
 
 class ClientAdmin(admin.ModelAdmin):
     '''
-    Clase que permite definir la configuracion de que, como y cuales datos se muestran
-    en la zona administrativa, correspondiente al modelo "Client". Tambien es donde se
-    definen los filtros para aplicar a los datos en la zona administrativa. Se define
-    el metodo totalOrderPrices para poder sortear los datos dependiendo de la orden.
+        Clase que permite definir la configuracion de que, como y cuales datos se muestran
+        en la zona administrativa, correspondiente al modelo "Client". Tambien es donde se
+        definen los filtros para aplicar a los datos en la zona administrativa. Se define
+        el metodo totalOrderPrices para poder sortear los datos dependiendo de la orden.
     '''
     list_display = ('name', 'last_name', 'email', 'order', 'totalOrderPrices')
     list_filter = ('name', 'last_name')
@@ -68,14 +68,16 @@ class ClientAdmin(admin.ModelAdmin):
 
 class SizeAdmin(admin.ModelAdmin):
     '''
-    Clase que permite definir la configuracion de que, como y cuales datos se muestran
-    en la zona administrativa, correspondiente al modelo "Size". Tambien es donde se
-    definen los filtros para aplicar a los datos en la zona administrativa.
+        Clase que permite definir la configuracion de que, como y cuales datos se muestran
+        en la zona administrativa, correspondiente al modelo "Size". Tambien es donde se
+        definen los filtros para aplicar a los datos en la zona administrativa.
     '''
     list_display = ('name', 'order', 'totalOrderPrice')
     list_filter = ('name',)
 
-'''Se registran los modelos en la zona administrativa y se asocian con su respectiva clase'''
+'''
+    Se registran los modelos en la zona administrativa y se asocian con su respectiva clase
+'''
 admin.site.register(Client, ClientAdmin)
 admin.site.register(Order, OrderAdmin)
 admin.site.register(Size, SizeAdmin)
